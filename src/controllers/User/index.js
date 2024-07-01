@@ -1,0 +1,53 @@
+const User = require("../../models/User");
+
+const handleErrors = (err) => {
+  const ORIGIN = "@Controllers/User/handleErrors()";
+
+  console.log(ORIGIN, err.message, err.code);
+  let errors = { email: "", password: "" };
+
+  if (err.code === 11000) {
+    errors.email = "Email is already registered";
+    return errors;
+  }
+
+  if (err.message.includes("User validation failed")) {
+    Object.values(err.errors).forEach(({ properties }) => {
+      errors[properties.path] = properties.message;
+    });
+  }
+
+  return errors;
+};
+
+module.exports.signup = async (req, res) => {
+  const ORIGIN = "@Controllers/User/signup()";
+
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.create({
+      email,
+      password,
+    });
+    res.status(201).json({ user });
+  } catch (error) {
+    const errors = handleErrors(error);
+    res.status(400).json({ errors });
+  }
+};
+
+module.exports.login = (req, res) => {
+  const ORIGIN = "@Controllers/User/login()";
+
+  const { email, password } = req.body;
+
+  try {
+  } catch (error) {}
+};
+
+module.exports.logout = (req, res) => {
+  const ORIGIN = "@Controllers/User/logout()";
+
+  res.send("logout");
+};
