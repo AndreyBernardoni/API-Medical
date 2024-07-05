@@ -3,6 +3,10 @@ const { isEmail } = require("validator");
 const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, "Name is required"],
+  },
   email: {
     type: String,
     required: [true, "Email is required"],
@@ -14,6 +18,18 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Password is required"],
     minLength: [6, "Password must be at least 6 characters"],
+  },
+  role: {
+    type: String,
+    required: [true, "Role is required"],
+  },
+  created_at: {
+    type: Date,
+    default: Date.now,
+  },
+  updated_at: {
+    type: Date,
+    default: Date.now,
   },
 });
 
@@ -27,9 +43,6 @@ userSchema.statics.login = async function (email, password) {
 
   if (user) {
     const auth = await bcrypt.compare(password, user.password);
-
-    console.log("auth password", password);
-    console.log("auth user.password", user.password);
 
     if (auth) {
       return user;
