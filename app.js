@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
-const UserRoutes = require("./src/routes/User");
+const CaregiverRoutes = require("./src/routes/Caregiver");
 const AuthRoutes = require("./src/routes/Auth");
 
 const app = express();
@@ -16,5 +16,5 @@ mongoose
   .catch((err) => console.log(err));
 
 app.get("/", (req, res) => res.send("Hello World!"));
-app.use("/user", UserRoutes);
+app.use("/caregiver", CaregiverRoutes);
 app.use("/auth", AuthRoutes);

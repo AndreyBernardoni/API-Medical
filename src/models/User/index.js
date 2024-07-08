@@ -2,6 +2,9 @@ const mongoose = require("mongoose");
 const { isEmail } = require("validator");
 const bcrypt = require("bcrypt");
 
+const caregiverController = require("../../controllers/Caregiver");
+// const elderlyController = require("../../controllers/Elderly");
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -34,7 +37,22 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.pre("save", async function (next) {
-  this.password = await bcrypt.bcrypt.hash(this.password, 10);
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
+
+userSchema.post("save", function (doc, next) {
+  if (doc.role === "Caregiver") {
+    caregiverController.create(
+      { body: { _id: doc._id } },
+      {
+        status: (code) => ({
+          json: (response) =>
+            console.log(`Response: ${code}, ${JSON.stringify(response)}`),
+        }),
+      }
+    );
+  }
   next();
 });
 

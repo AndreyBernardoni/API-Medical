@@ -25,12 +25,14 @@ module.exports.signup = async (req, res) => {
 
   console.log(ORIGIN);
 
-  const { email, password } = req.body;
+  const { email, password, role, name } = req.body;
 
   try {
     const user = await User.create({
       email,
       password,
+      role,
+      name,
     });
     res.status(201).json({ user });
   } catch (error) {
