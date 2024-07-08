@@ -3,7 +3,7 @@ const { isEmail } = require("validator");
 const bcrypt = require("bcrypt");
 
 const caregiverController = require("../../controllers/Caregiver");
-// const elderlyController = require("../../controllers/Elderly");
+const elderlyController = require("../../controllers/Elderly");
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -25,6 +25,7 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     required: [true, "Role is required"],
+    lowercase: true,
   },
   created_at: {
     type: Date,
@@ -42,8 +43,18 @@ userSchema.pre("save", async function (next) {
 });
 
 userSchema.post("save", function (doc, next) {
-  if (doc.role === "Caregiver") {
+  if (doc.role === "caregiver") {
     caregiverController.create(
+      { body: { _id: doc._id } },
+      {
+        status: (code) => ({
+          json: (response) =>
+            console.log(`Response: ${code}, ${JSON.stringify(response)}`),
+        }),
+      }
+    );
+  } else if (doc.role === "elderly") {
+    elderlyController.create(
       { body: { _id: doc._id } },
       {
         status: (code) => ({
